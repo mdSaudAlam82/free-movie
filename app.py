@@ -4,15 +4,30 @@ from bs4 import BeautifulSoup
 import re, base64, json, time, random, urllib.parse
 import datetime
 import threading
+import os
 
 app = Flask(__name__)
 
 # ==========================================
-# ⚙️ GLOBAL CONFIG & AUTO-DOMAIN FETCHER
+# ⚙️ GLOBAL CONFIG & PROXY SETUP
 # ==========================================
+
+# Render Dashboard mein PROXY_URL env variable set karo
+# Format: http://username:password@proxy.webshare.io:80
+PROXY_URL = os.environ.get("PROXY_URL")
+proxies = {"http": PROXY_URL, "https": PROXY_URL} if PROXY_URL else None
+
+if proxies:
+    masked = PROXY_URL.split("@")[-1] if "@" in PROXY_URL else "set"
+    print(f"[DEBUG] 🛡️ Proxy ACTIVE: {masked}")
+else:
+    print("[DEBUG] ⚠️ No proxy — running on direct IP")
+
 scraper = cloudscraper.create_scraper(
     browser={'browser': 'chrome', 'platform': 'windows', 'desktop': True}
 )
+if proxies:
+    scraper.proxies.update(proxies)
 
 # Cache system — simple dict with timestamp
 _cache = {}
@@ -353,6 +368,9 @@ def run_bypass():
     final_session = cloudscraper.create_scraper(
         browser={'browser': 'chrome', 'platform': 'windows', 'desktop': True}
     )
+    # Proxy bypass session pe bhi lagao
+    if proxies:
+        final_session.proxies.update(proxies)
     final_session.cookies.set('xyt', '1', domain='hubdrive.space')
     final_link = deep_bypass(target_url, final_session)
     return jsonify({'status': 'success', 'download_url': final_link})
