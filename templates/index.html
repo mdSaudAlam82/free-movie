@@ -774,7 +774,7 @@ function mvCardHTML(mv,id){
       <div class="mv-poster-wrap">
         <span class="mv-badge ${bc.cls}">${bc.txt}</span>
         ${mv.poster
-          ? `<img class="mv-poster-img" data-src="${esc(mv.poster)}" alt="${esc(mv.title)}" onerror="this.parentElement.innerHTML='${phHTML(mv.title).replace(/'/g,"\\'")}'">`
+          ? `<img class="mv-poster-img" data-src="${esc(mv.poster)}" alt="${esc(mv.title)}" onerror="this.parentElement.innerHTML='${phHTML(mv.title).replace(/"/g,"&quot;").replace(/'/g,"\\'")}'">`
           : phHTMLFull(mv.title)}
         <div class="mv-gradient"></div>
       </div>
