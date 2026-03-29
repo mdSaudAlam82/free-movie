@@ -804,7 +804,7 @@ function getBadge(cat){
   if(c.includes('web')||c.includes('series')) return {cls:'b-web',txt:'Web'};
   if(c.includes('netflix')) return {cls:'b-nf',txt:'NF'};
   if(c.includes('amazon'))  return {cls:'b-prime',txt:'Prime'};
-  return {cls:'b-other',txt:(cat||'Film').substring(0,5)};
+  return {cls:'b-other',txt:String(cat||'Film').substring(0,5)};
 }
 
 function goMovie(id){
@@ -1160,19 +1160,20 @@ document.addEventListener('DOMContentLoaded', ()=>{
   setTimeout(()=>document.getElementById('splash')?.classList.add('fade'), 900);
 
   // Search input handler
+  // Search input handler (Optimized for Server Load)
   const inp = document.getElementById('search-inp');
   if(inp){
-    inp.addEventListener('input', e=>{
-      clearTimeout(ST.searchTimer);
-      const q=e.target.value.trim();
-      if(!q) return;
-      ST.searchTimer=setTimeout(()=>doSearch(q), 500);
-    });
+    // 'input' event hata diya taaki har letter par search na ho
+    
+    // Ab sirf 'Enter' dabane par hi request jayegi
     inp.addEventListener('keydown', e=>{
       if(e.key==='Enter'){
         clearTimeout(ST.searchTimer);
         const q=e.target.value.trim();
         if(q) doSearch(q);
+        
+        // Mobile me Enter dabane ke baad keyboard chhupane ke liye
+        inp.blur(); 
       }
     });
   }
